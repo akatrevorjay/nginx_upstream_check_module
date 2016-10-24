@@ -2,23 +2,34 @@ ngx_addon_name=ngx_http_upstream_check_module
 ngx_module_incs=$ngx_addon_dir
 
 _HTTP_UPSTREAM_CHECK_SRCS="\
-  $ngx_addon_dir/ngx_http_upstream_check_module.c \
+  $ngx_addon_dir/${ngx_addon_name}.c \
 "
 
 _HTTP_UPSTREAM_CHECK_DEPS="\
-  $ngx_addon_dir/ngx_http_upstream_check_module.h \
+  $ngx_addon_dir/${ngx_addon_name}.h \
 "
 
-have=NGX_HTTP_UPSTREAM_CHECK . auto/have
+have=NGX_HTTP_UPSTREAM_CHECK_MODULE . auto/have
 
 if test -n "$ngx_module_link"; then
-  ngx_module_type=HTTP
   ngx_module_name=$ngx_addon_name
+
+  ngx_module_type=HTTP
+
+  ngx_module_deps="$_HTTP_UPSTREAM_CHECK_DEPS"
   ngx_module_srcs="$_HTTP_UPSTREAM_CHECK_SRCS"
+
+  ngx_module_libs=
+  ngx_module_incs=$ngx_addon_dir
+
   . auto/module
 else
-  NGX_ADDON_SRCS="$NGX_ADDON_SRCS $_HTTP_UPSTREAM_CHECK_SRCS"
-  CORE_INCS="$CORE_INCS $ngx_module_incs"
   HTTP_MODULES="$HTTP_MODULES $ngx_addon_name"
+
+  NGX_ADDON_SRCS="$NGX_ADDON_SRCS $_HTTP_UPSTREAM_CHECK_SRCS"
+  NGX_ADDON_DEPS="$NGX_ADDON_DEPS $_HTTP_UPSTREAM_CHECK_DEPS"
+
+  CORE_INCS="$CORE_INCS $ngx_module_incs"
+  CORE_LIBS="$CORE_LIBS"
 fi
 
